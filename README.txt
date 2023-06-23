@@ -9,5 +9,6 @@ Detailed log is in ${HOME}/install-weewx.log
 Contents:
    install-weewx.sh           the script
    install-weewx.log          sample logfile from a debian12 vagrant box
+   example-stdout.txt         what a successful installation looks like
 
 

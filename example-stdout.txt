@@ -1,0 +1,27 @@
+vagrant@bookworm:~$ bash install-weewx.sh
+installing weewx...
+updating apt
+   ok
+upgrading packages
+   ok
+installing python venv modules
+   ok
+creating python venv
+   ok
+activating python venv
+   ok
+cd to venv
+   ok
+installing weewx
+   ok
+create default Simulator station
+   ok
+install systemd service
+   ok
+reloading systemd
+   ok
+enable weewx
+   ok
+start weewx
+   ok
+done
