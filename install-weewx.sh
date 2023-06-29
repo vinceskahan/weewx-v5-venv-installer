@@ -102,13 +102,17 @@ fedora)    upgrade_rpm;
 esac
 
 echo "creating python venv"
-run_command "python3 -m venv weewx-data"
+run_command "python3 -m venv weewx-venv"
 
 echo "activating python venv"
-run_command "source weewx-data/bin/activate"
+run_command "source weewx-venv/bin/activate"
+
+#### needed if you use MySQL or MariaDB databases
+##echo "updating pip in venv"
+##run_command "python3 -m pip install pip --upgrade"
 
 echo "cd to venv"
-run_command "cd weewx-data"
+run_command "cd weewx-venv"
 
 echo "installing weewx"
 run_command "pip3 install weewx"
@@ -117,7 +121,7 @@ echo "create default Simulator station"
 run_command "weectl station create --no-prompt"
 
 echo "install systemd service"
-run_command "sudo cp ./util/systemd/weewx.service /lib/systemd/system/weewx.service"
+run_command "sudo cp ../weewx-data/util/systemd/weewx.service /lib/systemd/system/weewx.service"
 
 echo "reloading systemd"
 run_command "sudo systemctl daemon-reload"
