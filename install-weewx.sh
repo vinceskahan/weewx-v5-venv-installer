@@ -86,6 +86,9 @@ debian)    upgrade_apt;
 ubuntu)    upgrade_apt;
            run_command "sudo apt-get install -y python3-pip python3-venv";
            ;;
+raspbian)  upgrade_apt;
+           run_command "sudo apt-get install -y python3-pip python3-venv";
+           ;;
 rocky)     upgrade_rpm;
            run_command "sudo yum install -y python3-pip";
            run_command "sudo pip3 install virtualenv"
