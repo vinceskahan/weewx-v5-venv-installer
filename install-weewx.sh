@@ -12,6 +12,7 @@
 #    ubuntu2204
 #    rocky9
 #    almalinux9
+#    raspbian lite 2023-05-03
 #
 # can't test centos/9 - no official vagrant boxes released
 # can't test rhel/9   - no official vagrant boxes released
@@ -80,13 +81,13 @@ then
     . /etc/os-release
 fi
 case ${ID} in
-debian)    upgrade_apt; 
+raspbian)  upgrade_apt;
+           run_command "sudo apt-get install -y python3-pip python3-venv";
+           ;;
+debian)    upgrade_apt;
            run_command "sudo apt-get install -y python3-pip python3-venv";
            ;;
 ubuntu)    upgrade_apt;
-           run_command "sudo apt-get install -y python3-pip python3-venv";
-           ;;
-raspbian)  upgrade_apt;
            run_command "sudo apt-get install -y python3-pip python3-venv";
            ;;
 rocky)     upgrade_rpm;
@@ -122,6 +123,25 @@ run_command "pip3 install weewx"
 
 echo "create default Simulator station"
 run_command "weectl station create --no-prompt"
+
+#------- install mem extension -------
+#------- install mem extension -------
+#------- install mem extension -------
+echo "downloading mem extension"
+run_command "wget -O /var/tmp/mem.zip https://github.com/vinceskahan/vds-weewx-v3-mem-extension/archive/refs/heads/master.zip"
+echo " - installing"
+run_command "weectl extension install /var/tmp/mem.zip"
+
+echo "installing nginx"
+run_command "sudo apt-get install -y nginx"
+echo " - configuring"
+run_command "sudo ln -s /home/vagrant/weewx-data/public_html /var/www/html/weewx"
+
+echo "installing a couple extra packages"
+run_command "sudo apt-get install -y vim sqlite3"
+#------- install mem extension -------
+#------- install mem extension -------
+#------- install mem extension -------
 
 echo "install systemd service"
 run_command "sudo cp ../weewx-data/util/systemd/weewx.service /lib/systemd/system/weewx.service"
