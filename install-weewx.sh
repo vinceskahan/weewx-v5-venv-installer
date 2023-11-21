@@ -31,6 +31,18 @@
 
 LOGFILE=${HOME}/install-weewx.log
 
+# set the user we use to symlink into the web
+WEEWX_USER="unknown"
+if `grep "^vagrant:" /etc/passwd >/dev/null`
+then
+    WEEWX_USER="vagrant"
+else
+   if `grep "^pi:" /etc/passwd >/dev/null`
+   then
+     WEEWX_USER="pi"
+   fi
+fi
+
 function run_command() {
     cmd=$1
     echo "#-------------------------------------" >> $LOGFILE
@@ -111,7 +123,7 @@ run_command "python3 -m venv weewx-venv"
 echo "activating python venv"
 run_command "source weewx-venv/bin/activate"
 
-#### needed if you use MySQL or MariaDB databases
+#### possibly needed if you use MySQL or MariaDB databases
 ##echo "updating pip in venv"
 ##run_command "python3 -m pip install pip --upgrade"
 
@@ -135,7 +147,21 @@ run_command "weectl extension install /var/tmp/mem.zip"
 echo "installing nginx"
 run_command "sudo apt-get install -y nginx"
 echo " - configuring"
-run_command "sudo ln -s /home/vagrant/weewx-data/public_html /var/www/html/weewx"
+
+# hook weewx's public_html tree into the nginx docroot tree
+if [ 'x{WEEWX_USER}' = 'xunknown' ]
+then
+    # if you get here, weewx will run but public_html will not be
+    # hooked into the nginx web, meaning manual intervention is needed
+    echo "WARNING: cannot determine user to use to symlink into nginx web"
+else
+    # create a nginx docroot subdirectory for weewx to write to
+    # and permit the WEEWX_USER to write into that subdirectory
+    run_command "sudo mkdir -p /var/www/html/weewx"
+    run_command "sudo chmod 755 /var/www/html/weewx"
+    run_command "sudo chown ${WEEWX_USER}:${WEEWX_USER} /var/www/html/weewx"
+    run_command "sudo ln -s /var/www/html/weewx /home/${WEEWX_USER}/weewx-data/public_html"
+fi
 
 echo "installing a couple extra packages"
 run_command "sudo apt-get install -y vim sqlite3"
